@@ -20,7 +20,7 @@ namespace :index do
     desc "Stop the worker"
     task :stop => :environment do
       if worker_running?
-        sh "kill -9 #{worker_pid} && rm -f #{worker_pid_file}; true"
+        sh "kill -QUIT #{worker_pid} && rm -f #{worker_pid_file}; true"
       else
         puts "Worker was not running"
       end
