@@ -2,6 +2,7 @@ module Infopark
   module SES
 
     class Indexer
+      attr_accessor :indexed_docs
 
       def self.queue
         "index_#{RailsConnector::InfoparkBase.instance_name}"
@@ -74,10 +75,13 @@ module Infopark
           end
         end
 
-        @indexed_docs ||= 0
-        @indexed_docs += 1
+        self.indexed_docs += 1
 
         optimize if trigger_optimize?
+      end
+
+      def indexed_docs
+        @indexed_docs || 0
       end
 
       def optimize
@@ -122,7 +126,7 @@ module Infopark
       end
 
       def trigger_optimize?
-        @indexed_docs > 2
+        self.indexed_docs > 2
       end
 
       def self.log(severity, msg)
