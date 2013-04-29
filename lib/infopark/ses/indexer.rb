@@ -19,6 +19,13 @@ module Infopark
         @@collections = hash
       end
 
+      # A hash of options to pass to Solr calls. For example:
+      #
+      # {optimize: { expungeDeletes: true, waitSearcher: false } }
+      def self.solr_options=(hash)
+        @@solr_options = hash
+      end
+
       # The callback that decides which collections will receive an indexing request.
       # See config/initializers/indexer.rb. It may return a single key or an array of keys.
       def self.collection_selection(&block)
@@ -60,7 +67,7 @@ module Infopark
         solr_clients.each do |collection, solr_client|
           if fields && collections.include?(collection)
             log :info, "Indexing obj #{obj.id} (#{obj.path}) into collection #{collection}"
-            solr_client.add(fields)
+            solr_client.add(fields, add_attributes: add_options)
           else
             log :info, "Deleting obj #{obj_id} from collection #{collection}"
             solr_client.delete_by_id(obj_id)
@@ -69,16 +76,22 @@ module Infopark
 
         @indexed_docs ||= 0
         @indexed_docs += 1
-        if @indexed_docs > 2
-          solr_clients.each do |collection, solr_client|
-            solr_client.optimize
-          end
+
+        optimize if trigger_optimize?
+      end
+
+      def optimize
+        solr_clients = rsolr_connect
+
+        log :info, "Optimizing indexes"
+        solr_clients.each do |collection, solr_client|
+          solr_client.optimize(optimize_attributes: optimize_options)
         end
       end
 
-
       private
 
+      @@solr_options = {}
       @@collections = {:default => nil}
       @@collection_selection_callback = lambda {|obj| :default}
 
@@ -98,6 +111,18 @@ module Infopark
 
       def log(severity, msg)
         self.class.log(severity, msg)
+      end
+
+      def optimize_options
+        @@solr_options[:optimize] || {}
+      end
+
+      def add_options
+        @@solr_options[:add] || {}
+      end
+
+      def trigger_optimize?
+        @indexed_docs > 2
       end
 
       def self.log(severity, msg)
