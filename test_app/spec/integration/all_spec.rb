@@ -34,7 +34,7 @@ describe "Resque + Solr integration" do
   it "an object should be found under its name" do
     hit_count('name:999').should == 0
     @cm.tcl "
-      obj root create name 999 objClass document
+      obj root create name 999 objClass Document
       obj withPath /999 release
     "
 
@@ -64,7 +64,7 @@ describe "Resque + Solr integration" do
 
   it "an object which has an HTML body should not be found by searching an HTML tag name" do
     @cm.tcl %!
-      obj root create name htmlbody objClass document
+      obj root create name htmlbody objClass Document
       obj withPath /htmlbody editedContent set blob "Das ist der <span>Boddie</span> des Objekts"
       obj withPath /htmlbody release
     !
@@ -76,7 +76,7 @@ describe "Resque + Solr integration" do
 
   it "an object which no longer exists should not be found" do
     @cm.tcl "
-      obj root create name tobedel objClass document
+      obj root create name tobedel objClass Document
       obj withPath /tobedel release
     "
     lambda { hit_count('name:tobedel') }.should eventually_be(1)
@@ -88,7 +88,7 @@ describe "Resque + Solr integration" do
 
   it "an object which is not released should not be found" do
     @cm.tcl "
-      obj root create name tobeunreleased objClass document
+      obj root create name tobeunreleased objClass Document
       obj withPath /tobeunreleased release
     "
     lambda { hit_count('name:tobeunreleased') }.should eventually_be(1)
@@ -100,7 +100,7 @@ describe "Resque + Solr integration" do
 
   it "an object which will be valid in the future should not be found" do
     @cm.tcl "
-      obj root create name future objClass document
+      obj root create name future objClass Document
       obj withPath /future release
     "
     lambda { hit_count('name:future') }.should eventually_be(1)
@@ -117,7 +117,7 @@ describe "Resque + Solr integration" do
 
   it "an object which was valid in the past should not be found" do
     @cm.tcl "
-      obj root create name past objClass document
+      obj root create name past objClass Document
       obj withPath /past release
     "
     lambda { hit_count('name:past') }.should eventually_be(1)
@@ -135,7 +135,7 @@ describe "Resque + Solr integration" do
 
   it "an object which is valid since the past and will not become invalid should be found" do
     @cm.tcl "
-      obj root create name valid_from_past_and_valid_until_open_end objClass document
+      obj root create name valid_from_past_and_valid_until_open_end objClass Document
       obj withPath /valid_from_past_and_valid_until_open_end editedContent set validFrom #{4.days.ago.to_iso}
       obj withPath /valid_from_past_and_valid_until_open_end release
     "
@@ -146,7 +146,7 @@ describe "Resque + Solr integration" do
 
   it "an object which is valid since the past but will become invalid in the future should be found" do
     @cm.tcl "
-      obj root create name valid_from_past_and_valid_until objClass document
+      obj root create name valid_from_past_and_valid_until objClass Document
       obj withPath /valid_from_past_and_valid_until editedContent set validFrom #{4.days.ago.to_iso}
       obj withPath /valid_from_past_and_valid_until editedContent set validUntil #{2.days.from_now.to_iso}
       obj withPath /valid_from_past_and_valid_until release

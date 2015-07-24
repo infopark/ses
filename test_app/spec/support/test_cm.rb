@@ -3,7 +3,7 @@ class TestCM
   attr_reader :base, :instance
 
   def initialize
-    @base = Pathname("~/nps/gen/install/linux").expand_path
+    @base = Pathname("~/nps").expand_path
     @instance = base + "instance/seslucenmy"
   end
 
@@ -16,7 +16,7 @@ class TestCM
         --appName cm --serverName localhost --databaseName test_ses_lucene\
         --adminName root --adminPassword \"\" --user test_ses_lucene\
         --password test_ses_lucene --port 3306"
-    FileUtils.cp "#{base}/share/dbInstall/cmdb.xml", "#{instance}/config"
+    FileUtils.cp "#{base}/share/dbInstall/cmdb.xml", "#{instance}/config/"
 
     indexing_config = File.read("#{instance}/config/indexing.xml")
     open("#{instance}/config/indexing.xml", "w") do |f|
