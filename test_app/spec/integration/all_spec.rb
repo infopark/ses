@@ -43,10 +43,10 @@ describe "Resque + Solr integration" do
 
 
   it "an object whose path has changed should be found under the new path" do
-    hit_count('path:/misc/errors/401').should == 0
+    hit_count('path:\/misc\/errors\/401').should == 0
     @cm.tcl "obj withPath /global set name misc"
 
-    lambda { hit_count('path:/misc/errors/401') }.should eventually_be(1)
+    lambda { hit_count('path:\/misc\/errors\/401') }.should eventually_be(1)
   end
 
 
@@ -156,13 +156,13 @@ describe "Resque + Solr integration" do
   end
 
 
-  it "should find text within a PDF document" do
-    pending
+  it "should find text within a PDF Document" do
+#    pending
     pdf = Prawn::Document.new
-    pdf.text 'This is auniquepdfword in a PDF document'
+    pdf.text 'This is auniquepdfword in a PDF Document'
     blob64 = Base64.encode64(pdf.render)
     @cm.tcl "
-      obj root create name pdf objClass generic
+      obj root create name pdf objClass Generic
       obj withPath /pdf editedContent set blob.base64 {#{blob64}}
       obj withPath /pdf release
     "

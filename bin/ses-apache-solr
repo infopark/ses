@@ -7,8 +7,8 @@ require 'net/http'
 
 Rake.application.init($0)
 
-solr_version = "3.6.2"
-solr_base_name = "apache-solr-#{solr_version}"
+solr_version = "4.10.4"
+solr_base_name = "solr-#{solr_version}"
 solr_package = "#{solr_base_name}.tgz"
 url = "http://apache.openmirror.de/lucene/solr/#{solr_version}/#{solr_package}"
 install_dir = Pathname("~").expand_path
