@@ -105,4 +105,25 @@ task :status do
   end
 end
 
+# =====================
+# create core
+# =====================
+desc "Create a new core. Param CORE=name"
+task :create_core do
+  core_name = ENV['CORE'] or raise "Missing CORE name"
+  chdir(install_dir) do
+    # 1. step create core dir
+    solr_dir = 'apache-solr'
+    default_core_dir = solr_dir + '/cms/cores/default/'
+    core_dir = solr_dir + '/cms/cores/' + core_name
+
+    mkdir_p(core_dir + "/conf")
+    sh "rsync -a #{default_core_dir + "conf"}/ #{core_dir}/conf/"
+    sh "touch #{core_dir}/core.properties"
+
+  end
+  Rake::Task["stop"].invoke
+  Rake::Task["start"].invoke
+end
+
 Rake.application.top_level
