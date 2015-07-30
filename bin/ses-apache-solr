@@ -7,7 +7,7 @@ require 'net/http'
 
 Rake.application.init($0)
 
-solr_version = "4.10.4"
+solr_version = "5.2.1"
 solr_base_name = "solr-#{solr_version}"
 solr_package = "#{solr_base_name}.tgz"
 url = "http://apache.openmirror.de/lucene/solr/#{solr_version}/#{solr_package}"
@@ -69,8 +69,8 @@ end
 desc "Start the Apache Solr server process"
 task :start do
   unless ping_solr
-    chdir(install_dir + "apache-solr/example") do
-      sh "java -Xms512M -Xmx2048M -DSTOP.PORT=8079 -DSTOP.KEY=stop -Dsolr.solr.home=#{install_dir}/apache-solr/cms -jar start.jar >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1 &"
+    chdir(install_dir + "apache-solr/bin") do
+      sh "export SOLR_LOGS_DIR=#{install_dir}/apache-solr/cms/logs;./solr start -p 8983 -a \"-DSTOP.KEY=stop -Xms512M -Xmx2048M\" -s #{install_dir}/apache-solr/cms -d #{install_dir}/apache-solr/server >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1 &"
     end
     until ping_solr
       puts "Waiting for Solr to start up"
@@ -87,8 +87,8 @@ end
 desc "Stop the Apache Solr server process"
 task :stop do
   if ping_solr
-    chdir(install_dir + "apache-solr/example") do
-      sh "java -DSTOP.PORT=8079 -DSTOP.KEY=stop -Dsolr.solr.home=#{install_dir}/apache-solr/cms -jar start.jar --stop >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1"
+    chdir(install_dir + "apache-solr/bin") do
+      sh "./solr stop -p 7983 -key stop >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1"
     end
   end
 end

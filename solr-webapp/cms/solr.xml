@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<solr persistent="false">
-  <cores adminPath="/admin/cores" defaultCoreName="default">
-    <core name="default" instanceDir="cores/default"/>
-  </cores>
-
-  <!--
-  <cores adminPath="/admin/cores">
-    <core name="de" instanceDir="cores/de"/>
-    <core name="en" instanceDir="cores/en"/>
-  </cores>
-  -->
+<solr>
+  <str name="coreRootDirectory">cores</str>
 </solr>

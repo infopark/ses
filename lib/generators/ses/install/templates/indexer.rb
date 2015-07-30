@@ -8,11 +8,16 @@ Infopark::SES::Indexer.index_fields do |obj|
       :body => plain_body || obj.body,
       :valid_from => obj.valid_from.utc.iso8601,
       :valid_until => (obj.valid_until && obj.valid_until.utc.iso8601),
-      :title => obj[:title],
+      :title => obj.title,
     }
   end
 end
 
+# Single configuration:
+
+Infopark::SES::Indexer.collections = {
+  "default" => 'http://127.0.0.1:8983/solr/default'
+}
 
 # Multicore configuration:
 

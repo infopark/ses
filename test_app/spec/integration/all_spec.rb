@@ -5,11 +5,7 @@ require 'base64'
 describe "Resque + Solr integration" do
 
   def hit_count(q)
-    filter_query = [
-      "valid_from:[* TO NOW]",
-      "NOT valid_until:[* TO NOW]"
-    ]
-    @solr_client.get("select", :params => {:q => q, :fq => filter_query})['response']['numFound']
+    @solr_client.get("cms_live", :params => {:q => q})['response']['numFound']
   end
 
   before(:all) do
@@ -21,7 +17,7 @@ describe "Resque + Solr integration" do
     @solr = TestSolr.new
     @solr.setup
 
-    @solr_client = RSolr.connect
+    @solr_client = RSolr.connect(:url => 'http://127.0.0.1:8983/solr/default')
   end
 
   after(:all) do
