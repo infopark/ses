@@ -13,7 +13,11 @@ module Infopark
         data = obj.body
         mime_type = obj.mime_type
         attempts = options[:attempts] || 2
-        extractUrl = options[:solr_core_url] + "/update/extract" || "/solr/default/update/extract"
+        if options[:solr_core_url]
+          extractUrl = options[:solr_core_url] + "/update/extract"
+        else 
+          extractUrl = "/solr/default/update/extract"
+        end
         for attempt in 1..attempts do
           begin
             return RSolr.connect.post( extractUrl,
