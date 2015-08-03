@@ -13,7 +13,7 @@ namespace :index do
       if worker_running?
         puts "Worker is already running"
       else
-        sh "nohup bundle exec rake environment resque:work QUEUE=#{Infopark::SES::Indexer.queue} VERBOSE=1 PIDFILE=#{worker_pid_file} >> log/resque_worker_#{Infopark::SES::Indexer.queue}.log 2>&1 &"
+        sh "nohup bundle exec rake environment resque:work QUEUE=#{Infopark::SES::Indexer.queue} JOBS_PER_FORK=5000 VERBOSE=1 PIDFILE=#{worker_pid_file} >> log/resque_worker_#{Infopark::SES::Indexer.queue}.log 2>&1 &" 
       end
     end
 
