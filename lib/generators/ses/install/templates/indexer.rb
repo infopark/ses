@@ -1,12 +1,7 @@
 Infopark::SES::Indexer.index_fields do |obj|
   if obj.released? && !obj.suppress_export? && !obj.image?
     if obj.generic?
-      plain_body = Infopark::SES::Filter::text_via_solr_cell(
-        obj,
-        {
-          :fallback => '',
-          :solr_core_url => 'http://127.0.0.1:8983/solr/default'
-        })
+      plain_body = Infopark::SES::Filter::text_via_solr_cell(obj,{:fallback => ''})
     end
     {
       :id => obj.id,
@@ -37,3 +32,10 @@ Infopark::SES::Indexer.collections = {
 #   language_path_component = obj.path.split("/", 3)[1]
 #   [language_path_component] & %w(de en)
 # end
+
+Infopark::SES::Indexer.solr_options = {
+  # Provide addition parameters to the solr add request (http://wiki.apache.org/solr/UpdateXmlMessages)
+  :add => {},
+  # Provide addition parameters to the solr optimize request ()
+  :optimize => {}
+}

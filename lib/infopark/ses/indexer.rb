@@ -74,7 +74,6 @@ module Infopark
             solr_client.delete_by_id(obj_id)
           end
         end
-
         self.indexed_docs += 1
 
         optimize if trigger_optimize?
@@ -87,8 +86,8 @@ module Infopark
       def optimize
         solr_clients = rsolr_connect
 
-        log :info, "Optimizing indexes"
         solr_clients.each do |collection, solr_client|
+          log :info, "optimizing collection #{collection}"
           solr_client.optimize(optimize_attributes: optimize_options)
         end
       end
@@ -96,7 +95,7 @@ module Infopark
       private
 
       @@solr_options = {}
-      @@collections = {:default => nil}
+      @@collections = {:default => 'http://127.0.0.1:8983/solr/default'}
       @@collection_selection_callback = lambda {|obj| :default}
 
       def rsolr_connect
@@ -111,6 +110,18 @@ module Infopark
 
       def collections_for(obj)
         Array(@@collection_selection_callback.call(obj))
+      end
+
+      def optimize_options
+        @@solr_options[:optimize] || {}
+      end
+
+      def add_options
+        @@solr_options[:add] || {}
+      end
+
+      def trigger_optimize?
+        self.indexed_docs > 2
       end
 
       def log(severity, msg)
@@ -132,8 +143,6 @@ module Infopark
       def self.log(severity, msg)
         puts "[#{Time.new.strftime('%Y-%m-%d %H:%M:%S')}] #{severity.to_s.upcase} #{msg}"
       end
-
     end
-
   end
 end

@@ -12,11 +12,12 @@ module Infopark
       def self.text_via_solr_cell(obj, options = {})
         data = obj.body
         mime_type = obj.mime_type
+        options.reverse_merge!(@@solr_options)
         attempts = options[:attempts] || 2
         if options[:solr_core_url]
           extractUrl = options[:solr_core_url] + "/update/extract"
-        else 
-          extractUrl = "/solr/default/update/extract"
+        else
+          extractUrl = "http://127.0.0.1:8983/solr/default/update/extract"
         end
         for attempt in 1..attempts do
           begin
@@ -39,6 +40,16 @@ module Infopark
         end
         return options[:fallback] if options.key?(:fallback)
         raise error
+      end
+
+      @@solr_options = {
+        :solr_core_url => "http://127.0.0.1:8983/solr/default",
+        :attempts => 2,
+        :fallback => ''
+      }
+
+      def self.solr_cell_filter=(options)
+        @@solr_options = options
       end
 
       # convert the object's body to HTML using the Verity input filter (IF)
