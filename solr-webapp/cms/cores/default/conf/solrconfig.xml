@@ -621,6 +621,17 @@
   </requestHandler>
 
   <!-- Infopark CMS Fiona -->
+  <requestHandler name="/select" class="solr.SearchHandler">
+    <lst name="defaults">
+      <int name="rows">20</int>
+      <str name="facet">on</str>
+    </lst>
+    <lst name="appends">
+      <str name="q.op">OR</str>
+      <str name="df">text</str>
+    </lst>
+  </requestHandler>
+
   <requestHandler name="/cms_live" class="solr.SearchHandler">
     <lst name="defaults">
       <int name="rows">20</int>

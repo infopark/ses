@@ -5,7 +5,13 @@ require 'base64'
 describe "Resque + Solr integration" do
 
   def hit_count(q)
-    @solr_client.get("cms_live", :params => {:q => q})['response']['numFound']
+    @solr_client.get("select", :params => {
+      :q => q,
+      :fq => [
+      "NOT valid_from:[NOW TO *]",
+      "NOT valid_until:[* TO NOW-1SECONDS]"
+      ]
+    })['response']['numFound']
   end
 
   before(:all) do
