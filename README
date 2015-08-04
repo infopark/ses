@@ -30,18 +30,7 @@ Das Gem steht unter LGPL v3. Details siehe LICENSE.md.
 Gem testen
 ==============
 
-Es wird eine Fiona-6.7-Entwicklungsumgebung per Vagrant in ~/nps vorausgesetzt, die auch
-bereits gebaut sein muss:
-
-  git clone -b 6.8-maint git@github.com:infopark/fiona.git
-  cd fiona
-    git submodule update --init --recursive
-
-  vagrant ssh
-    cd nps
-    ln -s ~/licenses/infopark-internal-restricted-license.xml config/license.xml
-    rake build
-
+Es wird eine Fiona-7-Installation per Vagrant in ~/nps vorausgesetzt.
 
 Die Tests des Infopark SES Gems werden mit
 
@@ -105,12 +94,8 @@ wird die Datei nicht indiziert bzw. deindiziert.
 Infopark::SES::Indexer.index_fields soll projektspezifisch konfiguriert werden.
 
 config/initializers/filter.rb enthält Konfigurationseinstellungen, um den
-Fiona-IF-Filter (.doc -> .html usw.) einzubinden.
-
-
-Die Änderungen am Projekt können jetzt eingecheckt werden.
-
-
+Fiona-IF-Filter (.doc, .pdf -> .html) oder den Solr Content Extraction Library 
+(Solr Cell) (.pdf, .html -> .txt) einzubinden.
 
 
 Deployment in die Preview-Umgebung konfigurieren
@@ -195,10 +180,13 @@ Status:
 
 
 Zur Problemanalyse ist der Apache Solr erreichbar unter:
-http://localhost:8983/solr/admin bzw. http://localhost:8983/solr/de/admin bei
-Verwendung von mehreren Cores (aka. Collections). Im letzteren Fall ist der
-URL-Bestandteil "de" der Name des Cores.
+http://localhost:8983/solr/CORE_NAME/admin 
 
+Solr Erzegut Logs unter dem folgenden Verzeichnis:
+~/apache-solr/cms/logs/solr-8983-console.log
+
+Der Indexer selbst schreibt ein dediziertes Log unter :
+RAILS_APP_HOME/log/resque_worker_index_seslucenmy.log
 
 
 Komplette Indizierung
@@ -214,7 +202,7 @@ Komplette Indizierung
 Integration der Suche in Rails
 --------------------------------
 
-Die Rails-Connector-Add-Ons ab Version 6.7.3 unterstützen den Lucene-basierten SES.
+Die Rails-Connector-Add-Ons( ab Version 6.7.3 bis Version 6.9.1 ) unterstützen den Lucene-basierten SES.
 
 Zur Aktivierung muss der SearchRequest umdefiniert werden (lib/search_request.rb):
 
