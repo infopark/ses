@@ -1,5 +1,5 @@
 module Infopark
   module SES
-    VERSION = "6.9.0.1"
+    VERSION = "6.9.1"
   end
 end
