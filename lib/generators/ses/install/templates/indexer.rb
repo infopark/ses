@@ -34,8 +34,8 @@ Infopark::SES::Indexer.collections = {
 # end
 
 Infopark::SES::Indexer.solr_options = {
-  # Provide addition parameters to the solr add request (http://wiki.apache.org/solr/UpdateXmlMessages)
+  # Provide additional parameters to the solr add request (http://wiki.apache.org/solr/UpdateXmlMessages)
   :add => {},
-  # Provide addition parameters to the solr optimize request ()
+  # Provide additional parameters to the solr optimize request
   :optimize => {}
 }

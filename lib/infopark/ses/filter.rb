@@ -8,7 +8,7 @@ module Infopark
       # Options:
       # <tt>:fallback</tt>:: The value returned if extraction fails (after retry). If unset the exception is thrown
       # <tt>:attempts</tt>:: Overall attempts on errors. Default: <tt>2</tt> (retry once)
-      # <tt>:solr_core_url</tt>:: Url of the core whcih should be used for extraction
+      # <tt>:solr_core_url</tt>:: Url of the core which should be used for extraction
       def self.text_via_solr_cell(obj, options = {})
         data = obj.body
         mime_type = obj.mime_type
