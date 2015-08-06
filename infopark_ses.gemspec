@@ -19,4 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency "resque"
   s.add_dependency "rsolr"
+  s.add_dependency "resque-multi-job-forks"
 end

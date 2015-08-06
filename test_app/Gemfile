@@ -2,16 +2,16 @@ source 'http://rubygems.org'
 
 gem "rake"
 gem "rails"
-gem "infopark_rails_connector"
 gem "infopark_fiona_connector"
 gem "infopark_crm_connector"
 gem "infopark_ses", :path => ".."
 gem "sqlite3"
 gem "mysql2"
-gem "mysql_blob_streaming", "2.0.0"
+gem "mysql_blob_streaming"
 
 group :test do
   gem "rspec"
   gem "rspec-rails"
+  gem "rspec-mocks"
   gem "prawn" # test indexing of PDFs (made on the fly)
 end

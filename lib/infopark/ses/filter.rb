@@ -8,13 +8,20 @@ module Infopark
       # Options:
       # <tt>:fallback</tt>:: The value returned if extraction fails (after retry). If unset the exception is thrown
       # <tt>:attempts</tt>:: Overall attempts on errors. Default: <tt>2</tt> (retry once)
+      # <tt>:solr_core_url</tt>:: Url of the core which should be used for extraction
       def self.text_via_solr_cell(obj, options = {})
         data = obj.body
         mime_type = obj.mime_type
+        options.reverse_merge!(@@solr_options)
         attempts = options[:attempts] || 2
+        if options[:solr_core_url]
+          extractUrl = options[:solr_core_url] + "/update/extract"
+        else
+          extractUrl = "http://127.0.0.1:8983/solr/default/update/extract"
+        end
         for attempt in 1..attempts do
           begin
-            return RSolr.connect.post('update/extract',
+            return RSolr.connect.post( extractUrl,
                 :params => {
                   'extractOnly' => true,
                   'extractFormat' => 'text',
@@ -26,11 +33,23 @@ module Infopark
                 }
               )['']
           rescue StandardError => error
-            ActiveRecord::Base.logger.debug "Error filtering obj #{obj.id}, #{obj.path}, attempt #{attempt}: #{error.inspect}"
+            msg = "Error filtering obj #{obj.id}, #{obj.path}, attempt #{attempt}: #{error.inspect}"
+            ActiveRecord::Base.logger.debug msg 
+            puts "[#{Time.new.strftime('%Y-%m-%d %H:%M:%S')}] Error #{msg}"
           end
         end
         return options[:fallback] if options.key?(:fallback)
         raise error
+      end
+
+      @@solr_options = {
+        :solr_core_url => "http://127.0.0.1:8983/solr/default",
+        :attempts => 2,
+        :fallback => ''
+      }
+
+      def self.solr_cell_filter=(options)
+        @@solr_options = options
       end
 
       # convert the object's body to HTML using the Verity input filter (IF)

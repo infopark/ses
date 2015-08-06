@@ -7,8 +7,8 @@ require 'net/http'
 
 Rake.application.init($0)
 
-solr_version = "3.6.2"
-solr_base_name = "apache-solr-#{solr_version}"
+solr_version = "5.2.1"
+solr_base_name = "solr-#{solr_version}"
 solr_package = "#{solr_base_name}.tgz"
 url = "http://apache.openmirror.de/lucene/solr/#{solr_version}/#{solr_package}"
 install_dir = Pathname("~").expand_path
@@ -69,8 +69,8 @@ end
 desc "Start the Apache Solr server process"
 task :start do
   unless ping_solr
-    chdir(install_dir + "apache-solr/example") do
-      sh "java -Xms512M -Xmx2048M -DSTOP.PORT=8079 -DSTOP.KEY=stop -Dsolr.solr.home=#{install_dir}/apache-solr/cms -jar start.jar >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1 &"
+    chdir(install_dir + "apache-solr/bin") do
+      sh "export SOLR_LOGS_DIR=#{install_dir}/apache-solr/cms/logs;./solr start -p 8983 -a \"-DSTOP.KEY=stop -Xms512M -Xmx2048M\" -s #{install_dir}/apache-solr/cms -d #{install_dir}/apache-solr/server >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1 &"
     end
     until ping_solr
       puts "Waiting for Solr to start up"
@@ -87,8 +87,8 @@ end
 desc "Stop the Apache Solr server process"
 task :stop do
   if ping_solr
-    chdir(install_dir + "apache-solr/example") do
-      sh "java -DSTOP.PORT=8079 -DSTOP.KEY=stop -Dsolr.solr.home=#{install_dir}/apache-solr/cms -jar start.jar --stop >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1"
+    chdir(install_dir + "apache-solr/bin") do
+      sh "./solr stop -p 7983 -key stop >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1"
     end
   end
 end
@@ -103,6 +103,27 @@ task :status do
   else
     puts "Solr is not running"
   end
+end
+
+# =====================
+# create core
+# =====================
+desc "Create a new core. Param CORE=name"
+task :create_core do
+  core_name = ENV['CORE'] or raise "Missing CORE name"
+  chdir(install_dir) do
+    # 1. step create core dir
+    solr_dir = 'apache-solr'
+    default_core_dir = solr_dir + '/cms/cores/default/'
+    core_dir = solr_dir + '/cms/cores/' + core_name
+
+    mkdir_p(core_dir + "/conf")
+    sh "rsync -a #{default_core_dir + "conf"}/ #{core_dir}/conf/"
+    sh "touch #{core_dir}/core.properties"
+
+  end
+  Rake::Task["stop"].invoke
+  Rake::Task["start"].invoke
 end
 
 Rake.application.top_level
