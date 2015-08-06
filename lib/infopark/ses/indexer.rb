@@ -5,7 +5,7 @@ module Infopark
       attr_accessor :indexed_docs
 
       def self.queue
-        "index_#{RailsConnector::InfoparkBase.instance_name}"
+        "index_#{RailsConnector::CmsBaseModel.instance_name}"
       end
 
       # The callback that decides which fields are to be indexed. See

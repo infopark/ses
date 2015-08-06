@@ -17,15 +17,13 @@ describe "Filtering via Solr Cell" do
   end
 
   it "should convert a PDF document's body to text" do
-    obj = mock("obj", 
-      { 
-        :body => @pdf_body, 
-        :id => 2001, 
-        :mime_type => 'application/pdf',
-        :file_extension => 'pdf'
-      }
-    );
-    Infopark::SES::Filter::text_via_solr_cell(obj).should include "The PDF's Text"
+    obj = double()
+    allow(obj).to receive(:body).and_return(@pdf_body)
+    allow(obj).to receive(:id).and_return(2001)
+    allow(obj).to receive(:mime_type).and_return('application/pdf')
+    allow(obj).to receive(:file_extension).and_return('pdf')
+    allow(obj).to receive(:path).and_return('/testpdf')
+    expect( Infopark::SES::Filter::text_via_solr_cell(obj) ).to include "The PDF's Text"
   end
 
 end
@@ -42,15 +40,15 @@ describe "Filtering via verity " do
   end
 
   it "should convert a PDF document's body to html" do
-    obj = mock("obj", 
-      { 
-        :body => @pdf_body, 
-        :id => 2001, 
-        :mime_type => 'application/pdf',
-        :file_extension => 'pdf'
-      }
-    );
-    Infopark::SES::Filter::html_via_verity(obj).should include "The PDF&#39;s Text"
+    obj = double()
+    allow(obj).to receive(:body).and_return(@pdf_body)
+    allow(obj).to receive(:id).and_return(2001)
+    allow(obj).to receive(:mime_type).and_return('application/pdf')
+    allow(obj).to receive(:file_extension).and_return('pdf')
+    allow(obj).to receive(:path).and_return('/testpdf')
+    content = Infopark::SES::Filter::html_via_verity(obj).to_s
+    expect( content ).to include "The PDF&#39;s Text"
+    expect( content ). to include "<!DOCTYPE HTML"
   end
 
 end
