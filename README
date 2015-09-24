@@ -11,7 +11,7 @@ Rails Connector einsetzen. Infopark SES setzt eine Rails Connector-Anbindung
 zur CMS-Datenbank voraus.
 
 Infopark SES besteht aus dem SES Indexer-Resque-Worker, einem Installer für
-Apache Solr und der Logik zum Verdrahten dieser Software-Komponenten. Der
+Apache Solr und der Logik zum Verbinden dieser Software-Komponenten. Der
 eigentliche Kern des Infopark SES ist der Indexer. Er fragt unter Benutzung des
 Rails Connectors Objekt-Felder ab, und schickt diese aufbereitet an Apache
 Solr.
@@ -96,6 +96,24 @@ Infopark::SES::Indexer.index_fields soll projektspezifisch konfiguriert werden.
 config/initializers/filter.rb enthält Konfigurationseinstellungen, um den
 Fiona-IF-Filter (.doc, .pdf -> .html) oder den Solr Content Extraction Library 
 (Solr Cell) (.pdf, .html -> .txt) einzubinden.
+
+Um den Indexing-Worker sauber zu überwachen wird für diesen eine pid-Dateie erzeugt,
+welche die Prozess-Id des Workers enthält. Diese wird unter dem folgenden Pfad erzeugt.
+Bitte stellen Sie sicher, dass der Pfad entsprechend existiert:
+
+YOUR_RAILS_APPLICATION/tmp/pids
+
+Des Worker selbst können Sie anschließend über Rake-Tasks starten und oder stoppen:
+
+rake index:all                          # Re-index all objects
+rake index:worker:restart               # Restart the worker
+rake index:worker:start                 # Start the worker
+rake index:worker:status                # Reports the status of the worker
+rake index:worker:stop                  # Stop the worker
+
+Der Worker erzeugt ein eigenes Log im Applikations-Log-Ordner:
+
+YOUR_RAILS_APPLICATION/log/resque_worker_index_COLLECTION.log
 
 
 Deployment in die Preview-Umgebung konfigurieren
