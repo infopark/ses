@@ -1,0 +1,25 @@
+Tested to work with Solr 5.x 
+ => / in query needs to be escaped
+
+Core schema removed support for types :
+<fieldType name="pint" class="solr.IntField" omitNorms="true"/>
+<fieldType name="plong" class="solr.LongField" omitNorms="true"/>
+<fieldType name="pfloat" class="solr.FloatField" omitNorms="true"/>
+<fieldType name="pdouble" class="solr.DoubleField" omitNorms="true"/>
+<fieldType name="pdate" class="solr.DateField" sortMissingLast="true" omitNorms="true"/>
+
+Rsolr clients need to use explicit core names during connect
+http://SORL_SERVER:SOLR_PORT/sorl/CORE_NAME
+
+Adressing specific handling by the folliwng url
+
+http://SORL_SERVER:SOLR_PORT/sorl/CORE_NAME/HANDLER?q=QUERY_NAME
+rather then
+http://SORL_SERVER:SOLR_PORT/sorl/CORE_NAME/selectR?q=QUERY_NAME&qt=HANDLER
+
+TODO document
+/cms_live and /cms_preview handler
+
+describe how to extend field to index
+
+filter.rb is no longer required
