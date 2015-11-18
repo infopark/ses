@@ -21,6 +21,10 @@ Infopark::SES::Indexer.collections = {
   "default" => 'http://127.0.0.1:8983/solr/default'
 }
 
+Infopark::SES::Indexer.collection_selection do |obj|
+  :default
+end
+
 # Multicore configuration:
 
 # Infopark::SES::Indexer.collections = {
