@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem "rake"
 gem "rails", "4.2.4"
-gem "infopark_fiona_connector", "7.0.1.beta2"
+gem "infopark_fiona_connector", "7.0.1"
 gem "infopark_crm_connector"
 gem "infopark_ses", :path => ".."
 gem "sqlite3"
