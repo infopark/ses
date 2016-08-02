@@ -53,6 +53,11 @@ Gem bauen
   rake build
 
 
+Vorraussetzungen 
+=================
+
+Solr 6 Setz Java 8 vorraus und wird nicht unter Java 7 laufen.
+Ein Betrieb mit einer ältern Solr Version ist allerdings auch möglich (zb. 5.5.2 )
 
 Installation
 ==============
@@ -220,7 +225,7 @@ Komplette Indizierung
 Integration der Suche in Rails
 --------------------------------
 
-Die Rails-Connector-Add-Ons( ab Version 6.7.3 bis Version 6.9.1 ) unterstützen den Lucene-basierten SES.
+Die Rails-Connector-Add-Ons( ab Version 6.7.3 bis Version 7.0.2 ) unterstützen den Lucene-basierten SES.
 
 Zur Aktivierung muss der SearchRequest umdefiniert werden (lib/search_request.rb):
 
