@@ -59,14 +59,14 @@ describe "Solr multicore integration" do
     Infopark::SES::Indexer.perform( Obj.where(:path => "/core_0").all.first.id )
     Infopark::SES::Indexer.perform( Obj.where(:path => "/core_1").all.first.id )
 
-    lambda { hit_count('body:multicoretest1', 0) }.should eventually_be(1)
-    lambda { hit_count('body:multicoretest1', 1) }.should eventually_be(1)
+    expect( lambda { hit_count('body:multicoretest1', 0) } ).to eventually_be(1)
+    expect( lambda { hit_count('body:multicoretest1', 1) } ).to eventually_be(1)
 
-    lambda { hit_count('body:multicoretest2', 0) }.should eventually_be(1)
-    lambda { hit_count('body:multicoretest2', 1) }.should eventually_be(0)
+    expect( lambda { hit_count('body:multicoretest2', 0) } ).to eventually_be(1)
+    expect( lambda { hit_count('body:multicoretest2', 1) } ).to eventually_be(0)
 
-    lambda { hit_count('body:multicoretest3', 0) }.should eventually_be(0)
-    lambda { hit_count('body:multicoretest3', 1) }.should eventually_be(1)
+    expect( lambda { hit_count('body:multicoretest3', 0) } ).to eventually_be(0)
+    expect( lambda { hit_count('body:multicoretest3', 1) } ).to eventually_be(1)
   end
 
 
@@ -84,11 +84,11 @@ describe "Solr multicore integration" do
     Infopark::SES::Indexer.perform( Obj.where(:path => "/nocoretest").all.first.id )
     Infopark::SES::Indexer.perform( Obj.where(:path => "/no_core").all.first.id )
 
-    lambda { hit_count('body:nocoretest1', 0) }.should eventually_be(1)
-    lambda { hit_count('body:nocoretest1', 1) }.should eventually_be(1)
+    expect( lambda { hit_count('body:nocoretest1', 0) } ).to eventually_be(1)
+    expect( lambda { hit_count('body:nocoretest1', 1) } ).to eventually_be(1)
 
-    lambda { hit_count('body:nocoretest2', 0) }.should eventually_be(0)
-    lambda { hit_count('body:nocoretest2', 1) }.should eventually_be(0)
+    expect( lambda { hit_count('body:nocoretest2', 0) } ).to eventually_be(0)
+    expect( lambda { hit_count('body:nocoretest2', 1) } ).to eventually_be(0)
   end
 
 end

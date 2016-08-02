@@ -34,13 +34,13 @@ describe "Resque + Solr integration" do
 
 
   it "an object should be found under its name" do
-    hit_count('name:999').should == 0
+    expect( hit_count('name:999') ).to eq 0
     @cm.tcl "
       obj root create name 999 objClass Document
       obj withPath /999 release
     "
 
-    lambda { hit_count('name:999') }.should eventually_be(1)
+    expect( lambda { hit_count('name:999') } ).to eventually_be(1)
   end
 
 
@@ -48,19 +48,19 @@ describe "Resque + Solr integration" do
     hit_count('path:\/misc\/errors\/401').should == 0
     @cm.tcl "obj withPath /global set name misc"
 
-    lambda { hit_count('path:\/misc\/errors\/401') }.should eventually_be(1)
+    expect( lambda { hit_count('path:\/misc\/errors\/401') } ).to eventually_be(1)
   end
 
 
   it "an object which has an HTML body should be found by searching a word of the body" do
-    hit_count('body:Boddie').should == 0
+    expect( hit_count('body:Boddie') ).to eq 0
     @cm.tcl %!
       obj root edit
       obj root editedContent set blob "Das ist der Boddie des Objekts"
       obj root release
     !
 
-    lambda { hit_count('body:Boddie') }.should eventually_be(1)
+    expect( lambda { hit_count('body:Boddie') } ).to eventually_be(1)
   end
 
 
@@ -70,9 +70,9 @@ describe "Resque + Solr integration" do
       obj withPath /htmlbody editedContent set blob "Das ist der <span>Boddie</span> des Objekts"
       obj withPath /htmlbody release
     !
-    lambda { hit_count('name:htmlbody') }.should eventually_be(1)
+    expect( lambda { hit_count('name:htmlbody') } ).to eventually_be(1)
 
-    hit_count('body:span').should == 0
+    expect( hit_count('body:span') ).to eq 0
   end
 
 
@@ -81,10 +81,10 @@ describe "Resque + Solr integration" do
       obj root create name tobedel objClass Document
       obj withPath /tobedel release
     "
-    lambda { hit_count('name:tobedel') }.should eventually_be(1)
+    expect( lambda { hit_count('name:tobedel') } ).to eventually_be(1)
     @cm.tcl "obj withPath /tobedel delete"
 
-    lambda { hit_count('name:tobedel') }.should eventually_be(0)
+    expect( lambda { hit_count('name:tobedel') } ).to eventually_be(0)
   end
 
 
@@ -93,10 +93,10 @@ describe "Resque + Solr integration" do
       obj root create name tobeunreleased objClass Document
       obj withPath /tobeunreleased release
     "
-    lambda { hit_count('name:tobeunreleased') }.should eventually_be(1)
+    expect( lambda { hit_count('name:tobeunreleased') } ).to eventually_be(1)
     @cm.tcl "obj withPath /tobeunreleased unrelease"
 
-    lambda { hit_count('name:tobeunreleased') }.should eventually_be(0)
+    expect( lambda { hit_count('name:tobeunreleased') } ).to eventually_be(0)
   end
 
 
@@ -105,7 +105,7 @@ describe "Resque + Solr integration" do
       obj root create name future objClass Document
       obj withPath /future release
     "
-    lambda { hit_count('name:future') }.should eventually_be(1)
+    expect( lambda { hit_count('name:future') } ).to eventually_be(1)
 
     @cm.tcl "
       obj withPath /future edit
@@ -113,7 +113,7 @@ describe "Resque + Solr integration" do
       obj withPath /future release
     "
 
-    lambda { hit_count('name:future') }.should eventually_be(0)
+    expect( lambda { hit_count('name:future') } ).to eventually_be(0)
   end
 
 
@@ -122,7 +122,7 @@ describe "Resque + Solr integration" do
       obj root create name past objClass Document
       obj withPath /past release
     "
-    lambda { hit_count('name:past') }.should eventually_be(1)
+    expect( lambda { hit_count('name:past') } ).to eventually_be(1)
 
     @cm.tcl "
       obj withPath /past edit
@@ -131,7 +131,7 @@ describe "Resque + Solr integration" do
       obj withPath /past release
     "
 
-    lambda { hit_count('name:past') }.should eventually_be(0)
+    expect( lambda { hit_count('name:past') } ).to eventually_be(0)
   end
 
 
@@ -142,7 +142,7 @@ describe "Resque + Solr integration" do
       obj withPath /valid_from_past_and_valid_until_open_end release
     "
 
-    lambda { hit_count("name:valid_from_past_and_valid_until_open_end") }.should eventually_be(1)
+    expect( lambda { hit_count("name:valid_from_past_and_valid_until_open_end") } ).to eventually_be(1)
   end
 
 
@@ -154,7 +154,7 @@ describe "Resque + Solr integration" do
       obj withPath /valid_from_past_and_valid_until release
     "
 
-    lambda { hit_count('name:valid_from_past_and_valid_until') }.should eventually_be(1)
+    expect( lambda { hit_count('name:valid_from_past_and_valid_until') } ).to eventually_be(1)
   end
 
 
@@ -169,7 +169,7 @@ describe "Resque + Solr integration" do
       obj withPath /pdf release
     "
 
-    lambda { hit_count('body:auniquepdfword') }.should eventually_be(1)
+    expect( lambda { hit_count('body:auniquepdfword') } ).to eventually_be(1)
   end
 
 end

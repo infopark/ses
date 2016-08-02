@@ -74,7 +74,7 @@ task :start do
     end
     until ping_solr
       puts "Waiting for Solr to start up"
-      sleep 1
+      sleep 5
     end
     puts "Solr is up and running"
   end
