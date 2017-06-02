@@ -67,15 +67,15 @@ Einbindung des Infopark SES Gem in die Rails-App
 
 Gemfile:
 
-  gem "infopark_ses"
+  `gem "infopark_ses"`
 
 Infopark SES neben den Infopark Rails Connector und die anderen Gems in vendor/cache ablegen:
 
-  cp infopark_ses-x.y.z.gem vendor/cache/
+  `cp infopark_ses-x.y.z.gem vendor/cache/`
 
 Gems installieren:
 
-  bundle
+  `bundle`
 
 Bundler lädt notwendige Gems bei Bedarf von rubygems.org herunter. Alle
 Gem-Dateien werden, bevor sie installiert werden, automatisch in vendor/cache
@@ -87,18 +87,18 @@ auch ohne Internet-Verbindung ausgeführt werden kann.
 Infopark SES bringt beispielhaft Konfigurationsdateien mit, die in der
 Projekt-Rails-App benötigt werden:
 
-  rails g ses:install
+  `rails g ses:install`
 
 Ein paar dieser generierten Dateien werden im Folgende beschrieben:
 
-In config/initializers/indexer.rb wird festgelegt, welche Attribute eines Obj
+In `config/initializers/indexer.rb` wird festgelegt, welche Attribute eines Obj
 unter welchem Key im Solr-Index gespeichert werden sollen.
-Infopark::SES::Indexer.index_fields liefert für ein Obj einen Hash mit der
+`Infopark::SES::Indexer.index_fields` liefert für ein Obj einen Hash mit der
 Abbildung von Index-Keys auf Obj-Attribut-Werte. Liefert die Konfiguration nil,
 wird die Datei nicht indiziert bzw. deindiziert.
-Infopark::SES::Indexer.index_fields soll projektspezifisch konfiguriert werden.
+`Infopark::SES::Indexer.index_fields` soll projektspezifisch konfiguriert werden.
 
-config/initializers/filter.rb enthält Konfigurationseinstellungen, um den
+`config/initializers/filter.rb` enthält Konfigurationseinstellungen, um den
 Fiona-IF-Filter (.doc, .pdf -> .html) oder den Solr Content Extraction Library 
 (Solr Cell) (.pdf, .html -> .txt) einzubinden.
 
@@ -106,7 +106,7 @@ Um den Indexing-Worker sauber zu überwachen wird für diesen eine pid-Dateie er
 welche die Prozess-Id des Workers enthält. Diese wird unter dem folgenden Pfad erzeugt.
 Bitte stellen Sie sicher, dass der Pfad entsprechend existiert:
 
-YOUR_RAILS_APPLICATION/tmp/pids
+`YOUR_RAILS_APPLICATION/tmp/pids`
 
 Des Worker selbst können Sie anschließend über Rake-Tasks starten und oder stoppen:
 
@@ -118,29 +118,31 @@ rake index:worker:stop                  # Stop the worker
 
 Der Worker erzeugt ein eigenes Log im Applikations-Log-Ordner:
 
-YOUR_RAILS_APPLICATION/log/resque_worker_index_COLLECTION.log
-
+`YOUR_RAILS_APPLICATION/log/resque_worker_index_COLLECTION.log`
 
 Deployment in die Preview-Umgebung konfigurieren
 --------------------------------------------------
 
 Die Capistrano-Konfiguration für das Deployment mit Bundler kann folgendermaßen
-ergänzt werden. Am Anfang der Datei config/deploy.rb einfügen:
+ergänzt werden. Am Anfang der Datei `config/deploy.rb` einfügen:
 
+  ```
   set :bundle_flags, "--deployment --quiet --local"
   require 'bundler/capistrano'
+  ```
 
 In den Namespace :deploy zusätzlich den Task :restart_ses_indexer einfügen:
 
+	```
   task :restart_ses_indexer, :roles => :app do
     if stage == 'cms_preview'
       run "cd #{current_path} && bundle exec rake index:worker:restart"
     end
   end
+  ```
 
 Und weiter unten:
-  after "deploy:restart", "deploy:restart_ses_indexer"
-
+  `after "deploy:restart", "deploy:restart_ses_indexer"`
 
 
 Beim Deployment installiert Bundler mit der o.g. Option --deployment die Gems
@@ -159,18 +161,43 @@ Anbindung von Resque auf dem CMS-Server
 Bei Änderungen an Objekten werden vom CM entsprechende Indizierungs-Jobs in die
 Job-Queue von Resque gestellt werden. In Fiona existiert bereits die
 Schnittstelle, um die Tcl-Prozedur objectChangedCallback aufzurufen. Diese
-Prozedur muss nur noch im CM implementiert werden. Die Beispiel-Implementierung
-wird folgermaßen ins CM-Script-Verzeichnis kopiert und anschließend
-konfiguriert:
+Prozedur muss nur noch im CM implementiert werden. 
 
+Die Beispiel-Implementierung wird folgermaßen ins CM-Script-Verzeichnis kopiert 
+und anschließend konfiguriert:
+	
+	```
   cp $(bundle show infopark_ses)/cms-callback/* ~/CMS-Fiona/instance/default/script/cm/serverCmds/
   gem install resque --no-ri --no-rdoc --no-user-install --install-dir ~/CMS-Fiona/instance/default/script/gems
   gem install json --no-ri --no-rdoc --no-user-install --install-dir ~/CMS-Fiona/instance/default/script/gems
+	```
+
+Das Gem stellt zwei Implementationen bereit, von denen immer nur eine aktiv sein sollte.
+
+1. `rails_objectChangedCallback.tcl`
+
+	Diese implementation basiert auf einem Rails-Callback. Grundlegend ruft es ein Ruby-Skript auf, um die geänderten
+	Objekte in die Resque-Warteschlange zu schieben.
+	Vorteil:  Funktioniert ohne weitere Abhängigkeiten
+	Nachteil: Das aufrufen, des Ruby-Script ist eventuell langsam ( ~1sec ) da einige Gems geladen werden müssen
+	Für Entwicklungsumgebung ausreichend.
+
+2. `nativ_objectChangedCallback.tcl`
+
+	Diese implementation verwendet das redis-cli Konsolen Kommando um direkt mit dem Redis zu sprechen, und die 
+	geänderten Objekte in die Wartschlage zu schreiben.
+	Vorteil:  Arbeitet schneller als die Ruby-Implementation
+	Nachteil: Erfordert die Installation von `redis-cli` auf dem Server
+	Für Produktive Umgebung empfehlenswert.
+
+Löschen Sie jeweils die Implementation aus ~/CMS-Fiona/instance/default/script/cm/serverCmds/ die nicht verwendet
+werden soll.
 
 Schließlich muss noch der CM neu gestartet werden, damit er den neuen Callback nutzt:
 
+	```
   ~/CMS-Fiona/instance/default/bin/rc.npsd restart CM
-
+	```
 
 
 
@@ -185,41 +212,69 @@ ausgepackte Verzeichnis, damit es einfach über ~/apache-solr referenziert
 werden kann. Anschließend wird die neue Installation so konfiguriert, dass sie
 für den Einsatz mit Fiona geeignet ist:
 
+	```
   ssh cms-host
   cd $project/preview/current
   bundle exec ses-apache-solr install
+	```
 
 Starten:
 
+	```
   bundle exec ses-apache-solr start
+	```
 
 Stoppen:
 
+	```
   bundle exec ses-apache-solr stop
+	```
 
 Status:
 
+	```
   bundle exec ses-apache-solr status
+	```
 
 
 Zur Problemanalyse ist der Apache Solr erreichbar unter:
-http://localhost:8983/solr/CORE_NAME/admin 
+
+	`http://localhost:8983/solr`
 
 Solr Erzegut Logs unter dem folgenden Verzeichnis:
-~/apache-solr/cms/logs/solr-8983-console.log
+
+	```
+	~/apache-solr/cms/logs/solr-8983-console.log
+	```
 
 Der Indexer selbst schreibt ein dediziertes Log unter :
-RAILS_APP_HOME/log/resque_worker_index_seslucenmy.log
+	
+	```
+	RAILS_APP_HOME/log/resque_worker_index_seslucenmy.log
+	```
+
+Resque ist über die eigene Applikation unter der folgenden Adresse erreichbar:
+
+	```
+	http://localhost:3000/resque
+	```
+
+Wenn dieser unter `config/routes.rb` entsprechend eingerichtet ist:
+
+	```
+	mount Resque::Server.new, :at => "/resque"
+	```
 
 
 Komplette Indizierung
 ---------------------------
 
+	```
   ssh cms-host
   cd $project/preview/current
   RAILS_ENV=production bundle exec rake index:worker:start
   RAILS_ENV=production bundle exec rake index:all
-
+	```
 
 
 Integration der Suche in Rails
@@ -229,8 +284,10 @@ Die Rails-Connector-Add-Ons( ab Version 6.7.3 bis Version 7.0.2 ) unterstützen 
 
 Zur Aktivierung muss der SearchRequest umdefiniert werden (lib/search_request.rb):
 
+	```
   class SearchRequest < RailsConnector::LuceneSearchRequest
   end
+	```
 
 Das Interface bleibt gleich, bis auf folgende Ausnahmen: Querys werden in Solr
 Query Language anstatt VQL geschrieben. Die möglichen Optionen sind im
