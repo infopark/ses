@@ -392,6 +392,38 @@
     <fieldType name="bbox" class="solr.BBoxField"
                geo="true" distanceUnits="kilometers" numberType="_bbox_coord" />
     <fieldType name="_bbox_coord" class="solr.TrieDoubleField" precisionStep="8" docValues="true" stored="false"/>
+
+
+		<!-- field types as preparation for using solr as scrivito-search in Fiona7 -->
+    <!-- starts with field for text -->
+    <fieldType name="text_start_with" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="512"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <!-- exact equals -->
+    <fieldType name="text_equals" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+      </analyzer>
+    </fieldType>
+
+    <!-- contains prefix field for text -->
+    <fieldType name="text_prefix" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+        <filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="30"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+      </analyzer>
+    </fieldType>
+
  <!-- </types> -->
 
  <!-- <fields> -->
@@ -501,6 +533,10 @@
   <dynamicField name="attr_*" type="text_general" indexed="true" stored="true" multiValued="true"/>
 
   <dynamicField name="random_*" type="random" />
+
+  <dynamicField name="*_eq" type="text_equals" indexed="true" stored="false" multiValued="true"/>
+  <dynamicField name="*_sw" type="text_start_with" indexed="true" stored="false" multiValued="true"/>
+  <dynamicField name="*_pf" type="text_prefix" indexed="true" stored="false" multiValued="true"/>
 
 
    <field name="name" type="string" indexed="true" stored="false" required="false" />
