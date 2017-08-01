@@ -10,7 +10,7 @@ Rake.application.init($0)
 solr_version = "6.1.0"
 solr_base_name = "solr-#{solr_version}"
 solr_package = "#{solr_base_name}.tgz"
-url = "http://apache.openmirror.de/lucene/solr/#{solr_version}/#{solr_package}"
+url = "http://archive.apache.org/dist/lucene/solr/#{solr_version}/#{solr_package}"
 install_dir = Pathname("~").expand_path
 
 # =====================

@@ -58,12 +58,19 @@ module Infopark
         out_file = Tempfile.new("IF.out.#{identifier(obj)}.", "#{::Rails.root}/tmp")
         in_file.syswrite obj.body
 
-        cmd = "#{@@if_options[:bin_path]} #{@@if_options[:timeout_seconds]} #{in_file.path} " +
-            "#{out_file.path} #{@@if_options[:cfg_path]}"
-        system cmd or raise cmd
+				data = ""
+				begin
+					cmd = "#{@@if_options[:bin_path]} #{@@if_options[:timeout_seconds]} #{in_file.path} " +
+							"#{out_file.path} #{@@if_options[:cfg_path]}"
+					system cmd or raise cmd
 
-        out_file.reopen(out_file.path, 'r')
-        out_file.read
+					out_file.reopen(out_file.path, 'r')
+					data = out_file.read
+				ensure
+					in_file.unlink
+					out_file.unlink
+				end
+				return data
       end
 
       def self.verity_input_filter=(options)
