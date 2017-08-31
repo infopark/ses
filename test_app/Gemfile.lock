@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    infopark_ses (7.0.2)
+    infopark_ses (7.0.4)
       resque
       resque-multi-job-forks
       rsolr

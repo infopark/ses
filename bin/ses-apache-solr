@@ -7,7 +7,7 @@ require 'net/http'
 
 Rake.application.init($0)
 
-solr_version = "6.1.0"
+solr_version = "6.6.0"
 solr_base_name = "solr-#{solr_version}"
 solr_package = "#{solr_base_name}.tgz"
 url = "http://archive.apache.org/dist/lucene/solr/#{solr_version}/#{solr_package}"
@@ -88,7 +88,7 @@ desc "Stop the Apache Solr server process"
 task :stop do
   if ping_solr
     chdir(install_dir + "apache-solr/bin") do
-      sh "./solr stop -p 7983 -key stop >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1"
+      sh "./solr stop -p 8983 -key stop >> #{install_dir}/apache-solr/cms/logs/server.log 2>&1"
     end
   end
 end
