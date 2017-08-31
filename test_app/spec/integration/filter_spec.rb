@@ -51,4 +51,18 @@ describe "Filtering via verity " do
     expect( content ). to include "<!DOCTYPE HTML"
   end
 
+  it "should not leave IF* temp files behind" do
+    obj = double()
+    allow(obj).to receive(:body).and_return(@pdf_body)
+    allow(obj).to receive(:id).and_return(2001)
+    allow(obj).to receive(:mime_type).and_return('application/pdf')
+    allow(obj).to receive(:file_extension).and_return('pdf')
+    allow(obj).to receive(:path).and_return('/testpdf')
+    content = Infopark::SES::Filter::html_via_verity(obj).to_s
+
+    all_temp_files = Dir.glob("#{::Rails.root}/tmp/*")
+    expect( all_temp_files.join(",") ).not_to match("IF.in.2001.pdf")
+    expect( all_temp_files.join(",") ).not_to match("IF.out.2001.pdf")
+  end
+
 end
