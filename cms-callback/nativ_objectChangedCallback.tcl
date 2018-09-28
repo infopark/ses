@@ -9,7 +9,7 @@ proc add_to_redis { messages QUEUE CLASS } {
     append protocoll "RPUSH ${NAMESPACE}:queue:${QUEUE} \"{\\\"class\\\":\\\"${CLASS}\\\",\\\"args\\\":\\\"${m}\\\"}\"\r\n"
   }
 
-  logMessage 1 "sending to redis:\n $protocoll"
+  # logMessage 1 "sending to redis:\n $protocoll"
   set redis [ open "|redis-cli --pipe" w ]
   puts -nonewline $redis $protocoll
   close $redis

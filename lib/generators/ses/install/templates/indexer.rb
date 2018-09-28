@@ -22,7 +22,7 @@ Infopark::SES::Indexer.collections = {
 }
 
 Infopark::SES::Indexer.collection_selection do |obj|
-  :default
+  "default"
 end
 
 # Multicore configuration:
